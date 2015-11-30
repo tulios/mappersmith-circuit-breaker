@@ -1,0 +1,23 @@
+{
+  "name": "mappersmith-circuit-breaker",
+  "version": "0.1.0",
+  "description": "Circuit breaker implementation for Mappersmith, it protects your application from failures of it's service dependencies",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified yet\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tulios/mappersmith-circuit-breaker.git"
+  },
+  "keywords": [
+    "circuit-breaker",
+    "mappersmith"
+  ],
+  "author": "Tulio Ornelas <ornelas.tulio@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tulios/mappersmith-circuit-breaker/issues"
+  },
+  "homepage": "https://github.com/tulios/mappersmith-circuit-breaker#readme"
+}
