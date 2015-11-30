@@ -4,6 +4,8 @@
   "description": "Circuit breaker implementation for Mappersmith, it protects your application from failures of it's service dependencies",
   "main": "index.js",
   "scripts": {
+    "build": "./node_modules/.bin/browserify index.js -x mappersmith -s MappersmithCircuitBreaker -t browserify-versionify -o build/mappersmith-circuit-breaker.js",
+    "release": "npm run build && ./node_modules/.bin/uglifyjs build/mappersmith-circuit-breaker.js -t browserify-versionify --no-builtins -o build/mappersmith-circuit-breaker.min.js -c --screw-ie8",
     "test": "echo \"Error: no test specified yet\" && exit 1"
   },
   "repository": {
@@ -19,5 +21,42 @@
   "bugs": {
     "url": "https://github.com/tulios/mappersmith-circuit-breaker/issues"
   },
-  "homepage": "https://github.com/tulios/mappersmith-circuit-breaker#readme"
+  "homepage": "https://github.com/tulios/mappersmith-circuit-breaker#readme",
+  "devDependencies": {
+    "browserify": "^12.0.1",
+    "browserify-versionify": "^1.0.4",
+    "mocha": "^2.3.4",
+    "karma": "^0.13.2",
+    "karma-browserify": "^4.2.1",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^0.2.0",
+    "karma-commonjs": "^0.0.13",
+    "karma-firefox-launcher": "^0.1.6",
+    "karma-mocha": "^0.2.0",
+    "karma-phantomjs2-launcher": "^0.1.6",
+    "karma-sinon": "^1.0.4",
+    "karma-sinon-chai": "^0.3.2",
+    "mocha": "^2.0.1",
+    "rewire": "^2.3.0",
+    "rewireify": "0.0.13",
+    "sinon": "^1.12.2",
+    "sinon-chai": "^2.6.0",
+    "uglify-js": "^2.4.16",
+    "aliasify": "^1.7.2"
+  },
+  "dependencies": {
+    "browserify-shim": "^3.8.11",
+    "mappersmith": "^0.12.0"
+  },
+  "browserify": {
+    "transform": [
+      "aliasify",
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+   "mappersmith": "global:Mappersmith"
+ },
+ "browserify-shim": "./shim.conf.js",
+ "aliasify": "./aliasify.conf.js"
 }
