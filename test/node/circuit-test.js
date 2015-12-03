@@ -33,6 +33,7 @@ describe('Circuit', function() {
       // the circuit should open after 6 failures
       // volumeThreshold 6 > 5 and 100% error rate
       expect(runCounter).to.equal(6);
+      expect(circuit.storage.failure).to.equal(6);
     });
 
     it('keeps the circuit closed on 0% failure', function() {
@@ -45,11 +46,12 @@ describe('Circuit', function() {
       }
 
       expect(runCounter).to.equal(10);
+      expect(circuit.storage.success).to.equal(10);
     });
 
     it('keeps the circuit open even after 1 success', function() {
       var runCounter = 0;
-      for (var i = 0; i < 6; i++) {
+      for (var i = 0; i < 5; i++) {
         circuit.run(function() {
           runCounter += 1;
           throw new Error('request failure');
@@ -57,8 +59,9 @@ describe('Circuit', function() {
       }
 
       circuit.run(function() { 'success' });
-      expect(circuit.storage.failure).to.equal(6);
-      expect(runCounter).to.equal(6);
+      expect(circuit.storage.failure).to.equal(5);
+      expect(circuit.storage.success).to.equal(1);
+      expect(runCounter).to.equal(5);
 
       for (var i = 0; i < 6; i++) {
         circuit.run(function() {
@@ -67,8 +70,11 @@ describe('Circuit', function() {
         });
       }
 
-      // the circuit did not closed after 1 success
-      expect(runCounter).to.equal(6);
+
+      // the circuit didn't closed after 1 success because the error rate
+      // is still too high compared to the threshold
+      expect(runCounter).to.equal(5);
+      expect(circuit.storage.failure).to.equal(5);
     });
 
     it('keeps circuit closed when failure ratio do not exceed limit', function() {
@@ -105,6 +111,7 @@ describe('Circuit', function() {
       }
 
       expect(circuit.storage.failure).to.equal(0);
+      expect(circuit.storage.success).to.equal(10);
 
       for (var i = 0; i < 10; i++) {
         circuit.run(function() {
