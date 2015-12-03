@@ -6,6 +6,7 @@
   "scripts": {
     "build": "./node_modules/.bin/browserify index.js -x mappersmith -s MappersmithCircuitBreaker -t browserify-versionify -o build/mappersmith-circuit-breaker.js",
     "release": "npm run build && ./node_modules/.bin/uglifyjs build/mappersmith-circuit-breaker.js -t browserify-versionify --no-builtins -o build/mappersmith-circuit-breaker.min.js -c --screw-ie8",
+    "test-node": "NODE_ENV=test ./node_modules/.bin/mocha test/node/*-test.js",
     "test": "echo \"Error: no test specified yet\" && exit 1"
   },
   "repository": {
