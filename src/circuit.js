@@ -8,7 +8,7 @@ function fromNow(secs) {
  * Circuit constructor
  * @param opts {Object}
  *    * sleepWindow: seconds the circuit stays open once it has passed the error threshold (default: 300)
- *    * volumeThreshold: number of requests within 1 minute before it calculates error rates (default: 10)
+ *    * volumeThreshold: number of requests before it calculates error rates (default: 10)
  *    * errorThreshold: exceeding this rate will open the circuit (default: 50, percentage value)
  *    * timeoutSeconds: seconds before the circuit times out (default: 1)
  *    * timeWindow: interval of time used to calculate error_rate (in seconds, default: 60)
@@ -17,9 +17,9 @@ var Circuit = function(opts) {
   this.storage = {
     open: false,
     success: 0,
-    failure: 0,
-    circuitOpenedOrLastTestedTime: Date.now()
-  };
+    failure: 0
+  }
+
   this.opts = Utils.extend({
     sleepWindow: 300,
     volumeThreshold: 10,
@@ -42,6 +42,8 @@ Circuit.prototype = {
         this.markSuccess();
       } catch(e) {
         this.markFailure();
+        if (this.isOpen()) this.storage.open = true;
+
         // fallback?
       }
     } else {
@@ -67,10 +69,7 @@ Circuit.prototype = {
   },
 
   isPassedVolumeThreashold: function() {
-    var success = this.storage.success;
-    var failure = this.storage.failure;
-    var count = success + failure;
-    return count > this.opts.volumeThreshold;
+    return this.requestCount() > this.opts.volumeThreshold;
   },
 
   isPassedRateThreashould: function() {
@@ -78,11 +77,15 @@ Circuit.prototype = {
   },
 
   errorRate: function() {
+    var count = this.requestCount();
+    if (count <= 0) return 0.0;
+    return this.storage.failure.toFixed(2) / count.toFixed(2) * 100;
+  },
+
+  requestCount: function() {
     var success = this.storage.success;
     var failure = this.storage.failure;
-    var count = success + failure;
-    if (count <= 0) return 0.0;
-    return failure.toFixed(2) / count.toFixed(2) * 100;
+    return success + failure;
   },
 
   markSuccess: function() {
